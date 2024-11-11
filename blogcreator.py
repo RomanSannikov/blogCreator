@@ -25,8 +25,10 @@ with open(args.filename, 'r') as input_file:
 	md = input_file.read()
 
 # Make convertions from Markdown to HTML
+# Handle code blocks
 md, code_blocks = chatgpt_md_converter.telegram_formatter.extract_and_convert_code_blocks(md)
 md = chatgpt_md_converter.telegram_formatter.reinsert_code_blocks(md, code_blocks)
+# Handle hashtags
 md = re.sub(r'#(\w+)', r'<p>#\1</p>', md)
 # Handle footnotes
 md = re.sub(r'\[\^(\d+)\](?!:)', lambda match: f'<sup><a href="#fn{match.group(1)}" id="ref{match.group(1)}">{match.group(1)}</a></sup>', md)
@@ -35,6 +37,7 @@ md = re.sub(
         r'\[\^(\d+)\]: \[(.*?)\]\((.*?)\)',
         lambda match: f'<p><sup id="fn{match.group(1)}"><a href="#ref{match.group(1)}">{match.group(1)}.</a>: <a href="{match.group(3)}">[{match.group(2)}]</a></sup></p>',
 		md)
+# Convert other Markdown parts to HTML
 html = markdown.markdown(md)
 
 # Write HTML to file
