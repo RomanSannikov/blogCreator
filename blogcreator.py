@@ -13,10 +13,12 @@ argparser.add_argument('filename', help='Markdown file path', type=str)
 argparser.add_argument('-o', '--output', help='Output file name', type=str)
 args = argparser.parse_args()
 
-# Create an output HTML file
+# Create an output filepath
 output_filename = args.output
 if not output_filename:
 	output_filename = str(pathlib.Path(args.filename).with_suffix('.html'))
+elif pathlib.Path(output_filename).is_dir():
+	output_filename = str(pathlib.Path(output_filename) / pathlib.Path(args.filename).with_suffix('.html').name)
 
 # Read input
 with open(args.filename, 'r') as input_file:
